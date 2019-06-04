@@ -73,12 +73,15 @@ class BaseFirebaseAuthentication(BaseAuthentication):
             # TODO: This assumes emails are unique. Factor this out as an option
             try:
                 user = User.objects.get(email=user.email)
+                if uid_field != 'username':
+                    user.username = user.email
                 setattr(user, uid_field, uid)
                 user.save()
             except User.DoesNotExist:
                 fields = {
-                    uid_field: uid,
-                    'email': user.email
+                    'username': user.email,
+                    'email': user.email,
+                    uid_field: uid
                 }
                 try:
                     u = User(**fields)
